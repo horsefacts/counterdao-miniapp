@@ -10,6 +10,7 @@ import {
 } from "wagmi";
 import { mainnet } from "viem/chains";
 
+import DSSDiagram from "./img/dss-diagram.png";
 import { CounterAbi } from "./contract/abi";
 import { COUNTER_ADDRESS } from "./contract/constants";
 
@@ -22,6 +23,13 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
+      <div className="w-full mb-8">
+        <img
+          src={DSSDiagram}
+          alt="Decentralized Summation System Diagram"
+          className="w-full rounded-lg shadow-md"
+        />
+      </div>
       <div className="w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-4 text-gray-900 dark:text-white">
           CounterDAO
@@ -56,9 +64,10 @@ function Counter() {
     `0x${string}` | undefined
   >();
 
-  const { data: receipt } = useWaitForTransactionReceipt({
-    hash: transactionHash,
-  });
+  const { data: receipt, isLoading: isConfirming } =
+    useWaitForTransactionReceipt({
+      hash: transactionHash,
+    });
 
   useEffect(() => {
     if (receipt) {
@@ -119,7 +128,7 @@ function Counter() {
           <button
             type="button"
             onClick={handleDip}
-            disabled={isPending}
+            disabled={isPending || isConfirming}
             className="px-6 py-2.5 rounded-lg font-medium text-white
               bg-red-500 hover:bg-red-600 dark:hover:bg-red-400
               disabled:opacity-50 transition-colors"
@@ -129,7 +138,7 @@ function Counter() {
           <button
             type="button"
             onClick={handleHit}
-            disabled={isPending}
+            disabled={isPending || isConfirming}
             className="px-6 py-2.5 rounded-lg font-medium text-white
               bg-emerald-500 hover:bg-emerald-600 dark:hover:bg-emerald-400
               disabled:opacity-50 transition-colors"
@@ -137,6 +146,16 @@ function Counter() {
             {isPending ? "Processing..." : "Hit"}
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() =>
+            sdk.actions.openUrl("https://github.com/counterdao/dss")
+          }
+          className="mt-6 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-sm font-medium transition-colors"
+        >
+          Learn more about the Decentralized Summation System
+        </button>
       </div>
 
       {error && (
@@ -159,12 +178,6 @@ function ConnectWallet() {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 text-center transition-colors">
-      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
-        Connect Your Wallet
-      </h2>
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        Connect your wallet to interact with the CounterDAO contract
-      </p>
       <button
         type="button"
         onClick={() =>
