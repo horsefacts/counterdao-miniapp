@@ -4,6 +4,7 @@ import {
   useAccount,
   useConnect,
   useReadContract,
+  useSwitchChain,
   useWriteContract,
 } from "wagmi";
 import { mainnet } from "viem/chains";
@@ -31,6 +32,7 @@ function App() {
 }
 
 function Counter() {
+  const { switchChainAsync } = useSwitchChain();
   const {
     data: counterValue,
     isLoading,
@@ -51,6 +53,7 @@ function Counter() {
 
   const handleHit = async () => {
     try {
+      await switchChainAsync({ chainId: mainnet.id });
       await writeContractAsync({
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
@@ -65,6 +68,7 @@ function Counter() {
 
   const handleDip = async () => {
     try {
+      await switchChainAsync({ chainId: mainnet.id });
       await writeContractAsync({
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
