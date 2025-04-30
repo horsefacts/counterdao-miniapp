@@ -1,11 +1,12 @@
 import { sdk } from "@farcaster/frame-sdk";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useAccount,
   useConnect,
   useReadContract,
   useSwitchChain,
   useWriteContract,
+  useWaitForTransactionReceipt,
 } from "wagmi";
 import { mainnet } from "viem/chains";
 
@@ -51,16 +52,30 @@ function Counter() {
     error: writeError,
   } = useWriteContract();
 
+  const [transactionHash, setTransactionHash] = useState<`0x${string}` | undefined>();
+
+  const {
+    data: receipt,
+  } = useWaitForTransactionReceipt({
+    hash: transactionHash,
+  });
+
+  useEffect(() => {
+    if (receipt) {
+      refetch();
+    }
+  }, [receipt, refetch]);
+
   const handleHit = async () => {
     try {
       await switchChainAsync({ chainId: mainnet.id });
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "hit",
         chainId: mainnet.id
       });
-      refetch();
+      setTransactionHash(hash);
     } catch (e) {
       console.error("Error incrementing counter:", e);
     }
@@ -69,13 +84,13 @@ function Counter() {
   const handleDip = async () => {
     try {
       await switchChainAsync({ chainId: mainnet.id });
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "dip",
         chainId: mainnet.id
       });
-      refetch();
+      setTransactionHash(hash);
     } catch (e) {
       console.error("Error decrementing counter:", e);
     }
