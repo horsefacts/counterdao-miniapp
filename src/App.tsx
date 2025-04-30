@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import {
   useAccount,
   useConnect,
-  useSwitchChain,
   useReadContract,
   useWriteContract,
 } from "wagmi";
@@ -13,18 +12,11 @@ import { CounterAbi } from "./contract/abi";
 import { COUNTER_ADDRESS } from "./contract/constants";
 
 function App() {
-  const { isConnected, chainId } = useAccount();
-  const { switchChain } = useSwitchChain();
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     sdk.actions.ready();
   }, []);
-
-  useEffect(() => {
-    if (chainId !== mainnet.id) {
-      switchChain({ chainId: mainnet.id });
-    }
-  }, [switchChain, chainId]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -48,6 +40,7 @@ function Counter() {
     address: COUNTER_ADDRESS,
     abi: CounterAbi,
     functionName: "see",
+    chainId: mainnet.id
   });
 
   const {
@@ -62,6 +55,7 @@ function Counter() {
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "hit",
+        chainId: mainnet.id
       });
       refetch();
     } catch (e) {
@@ -75,6 +69,7 @@ function Counter() {
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "dip",
+        chainId: mainnet.id
       });
       refetch();
     } catch (e) {
