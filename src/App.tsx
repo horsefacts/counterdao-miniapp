@@ -1,6 +1,8 @@
 import { sdk } from "@farcaster/frame-sdk";
 import { useEffect } from "react";
 import { useAccount, useConnect, useReadContract, useWriteContract } from "wagmi";
+import { mainnet } from "viem/chains";
+
 import { CounterAbi } from "./contract/abi";
 import { COUNTER_ADDRESS } from "./contract/constants";
 
@@ -130,7 +132,7 @@ function ConnectWallet() {
       </p>
       <button
         type="button"
-        onClick={() => connect({ connector: connectors[0] })}
+        onClick={() => connect({ connector: connectors[0], chainId: mainnet.chainId })}
         className="px-6 py-2.5 rounded-lg font-medium text-white
           bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-400
           transition-colors"
