@@ -21,9 +21,9 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-center mb-4 text-gray-900 dark:text-white">
           CounterDAO
         </h1>
         {isConnected ? <Counter /> : <ConnectWallet />}
@@ -43,7 +43,7 @@ function Counter() {
     address: COUNTER_ADDRESS,
     abi: CounterAbi,
     functionName: "see",
-    chainId: mainnet.id
+    chainId: mainnet.id,
   });
 
   const {
@@ -52,11 +52,11 @@ function Counter() {
     error: writeError,
   } = useWriteContract();
 
-  const [transactionHash, setTransactionHash] = useState<`0x${string}` | undefined>();
+  const [transactionHash, setTransactionHash] = useState<
+    `0x${string}` | undefined
+  >();
 
-  const {
-    data: receipt,
-  } = useWaitForTransactionReceipt({
+  const { data: receipt } = useWaitForTransactionReceipt({
     hash: transactionHash,
   });
 
@@ -73,7 +73,7 @@ function Counter() {
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "hit",
-        chainId: mainnet.id
+        chainId: mainnet.id,
       });
       setTransactionHash(hash);
     } catch (e) {
@@ -88,7 +88,7 @@ function Counter() {
         address: COUNTER_ADDRESS,
         abi: CounterAbi,
         functionName: "dip",
-        chainId: mainnet.id
+        chainId: mainnet.id,
       });
       setTransactionHash(hash);
     } catch (e) {
@@ -124,7 +124,7 @@ function Counter() {
               bg-red-500 hover:bg-red-600 dark:hover:bg-red-400
               disabled:opacity-50 transition-colors"
           >
-            {isPending ? "Processing..." : "Dip (-1)"}
+            {isPending ? "Processing..." : "Dip"}
           </button>
           <button
             type="button"
@@ -134,7 +134,7 @@ function Counter() {
               bg-emerald-500 hover:bg-emerald-600 dark:hover:bg-emerald-400
               disabled:opacity-50 transition-colors"
           >
-            {isPending ? "Processing..." : "Hit (+1)"}
+            {isPending ? "Processing..." : "Hit"}
           </button>
         </div>
       </div>
