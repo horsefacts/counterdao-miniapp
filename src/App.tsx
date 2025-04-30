@@ -132,7 +132,7 @@ function ConnectWallet() {
       </p>
       <button
         type="button"
-        onClick={() => connect({ connector: connectors[0], chainId: mainnet.chainId })}
+        onClick={() => connect({ connector: connectors[0], chainId: mainnet.id })}
         className="px-6 py-2.5 rounded-lg font-medium text-white
           bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-400
           transition-colors"
