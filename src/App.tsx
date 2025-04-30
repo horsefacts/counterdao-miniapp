@@ -1,22 +1,37 @@
 import { sdk } from "@farcaster/frame-sdk";
 import { useEffect } from "react";
-import { useAccount, useConnect, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useConnect,
+  useSwitchChain,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
 import { mainnet } from "viem/chains";
 
 import { CounterAbi } from "./contract/abi";
 import { COUNTER_ADDRESS } from "./contract/constants";
 
 function App() {
+  const { isConnected, chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
+
   useEffect(() => {
     sdk.actions.ready();
   }, []);
 
-  const { isConnected } = useAccount();
+  useEffect(() => {
+    if (chainId !== mainnet.id) {
+      switchChain({ chainId: mainnet.id });
+    }
+  }, [switchChain, chainId]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">CounterDAO</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+          CounterDAO
+        </h1>
         {isConnected ? <Counter /> : <ConnectWallet />}
       </div>
     </div>
@@ -35,7 +50,11 @@ function Counter() {
     functionName: "see",
   });
 
-  const { writeContractAsync, isPending, error: writeError } = useWriteContract();
+  const {
+    writeContractAsync,
+    isPending,
+    error: writeError,
+  } = useWriteContract();
 
   const handleHit = async () => {
     try {
@@ -126,13 +145,17 @@ function ConnectWallet() {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 text-center transition-colors">
-      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Connect Your Wallet</h2>
+      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
+        Connect Your Wallet
+      </h2>
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         Connect your wallet to interact with the CounterDAO contract
       </p>
       <button
         type="button"
-        onClick={() => connect({ connector: connectors[0], chainId: mainnet.id })}
+        onClick={() =>
+          connect({ connector: connectors[0], chainId: mainnet.id })
+        }
         className="px-6 py-2.5 rounded-lg font-medium text-white
           bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-400
           transition-colors"
